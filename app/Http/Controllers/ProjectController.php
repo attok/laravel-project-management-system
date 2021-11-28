@@ -76,6 +76,18 @@ class ProjectController extends Controller
      * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
+    public function show(Project $project)
+    {
+        return view('project.view', [
+            'project' => $project
+        ]);
+    }
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Http\Response
+     */
     public function edit(Project $project)
     {
         return view('project.edit', [
