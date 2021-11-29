@@ -26,4 +26,9 @@ Route::get('/dashboard', function () {
 Route::resource('project', ProjectController::class)
     ->middleware(['auth']);
 
+Route::post('/project/{project}/add-task', [ProjectController::class, 'addTask']);
+Route::get('/project/{project}/edit-task/{projectTask}', [ProjectController::class, 'editTask']);
+Route::put('/project/{project}/edit-task/{projectTask}', [ProjectController::class, 'updateTask']);
+Route::delete('/project/{project}/delete-task/{projectTask}', [ProjectController::class, 'deleteTask']);
+
 require __DIR__ . '/auth.php';

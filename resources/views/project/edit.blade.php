@@ -66,6 +66,24 @@
 
             </div>
 
+
+            <div class="mb-4">
+                <label for="project-status" class="block">Status</label>
+                <select name="status" class="rounded" id="project-status">
+                    @foreach (App\Models\ProjectTask::getStatusList() as $code => $status)
+                        <option value="{{ $code }}" {{ $code == $project->status ? 'selected' : '' }}>
+                            {{ $status }}
+                        </option>
+                    @endforeach
+                </select>
+
+                @error('status')
+                    <div class="text-red-700">{{ $message }}</div>
+                @enderror
+            </div>
+
             <button type="submit" class="btn btn-primary">Simpan</button>
+        </form>
+
     </div>
 </x-app-layout>

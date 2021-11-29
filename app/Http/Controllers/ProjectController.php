@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\ProjectTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
 {
@@ -15,8 +17,10 @@ class ProjectController extends Controller
      */
     public function index()
     {
+        $projects = Project::paginate(2);
+        $projects->withPath('/project');
         return view('project.index', [
-            'projects' => Project::all()
+            'projects' => $projects
         ]);
     }
 
@@ -46,6 +50,7 @@ class ProjectController extends Controller
             'description' => 'required',
             'startDate' => 'date|required',
             'endDate' => 'date',
+            'status' => Rule::in(array_keys(Project::getStatusList()))
         ], [
             'max' => 'max panjang 255 karakter.',
             'required' => 'Field :attribute tidak boleh kosong.',
@@ -65,6 +70,7 @@ class ProjectController extends Controller
         $project->description = $validated['description'];
         $project->startDate = $validated['startDate'];
         $project->endDate = $validated['endDate'];
+        $project->status = $validated['status'];
 
         $project->save();
         return redirect('project')->with('success', 'Berhasil menambahkan data.');;
@@ -109,6 +115,7 @@ class ProjectController extends Controller
             'description' => 'required',
             'startDate' => 'date|required',
             'endDate' => 'date',
+            'status' => Rule::in(array_keys(Project::getStatusList()))
         ], [
             'max' => 'max panjang 255 karakter.',
             'required' => 'Field :attribute tidak boleh kosong.',
@@ -127,9 +134,10 @@ class ProjectController extends Controller
         $project->description = $validated['description'];
         $project->startDate = $validated['startDate'];
         $project->endDate = $validated['endDate'];
+        $project->status = $validated['status'];
 
         $project->save();
-        return redirect('project')->with('success', 'Berhasil menyimpan data.');
+        return redirect('project/' . $project->id)->with('success', 'Berhasil menyimpan data.');
     }
 
     /**
@@ -142,5 +150,86 @@ class ProjectController extends Controller
     {
         $project->delete();
         return redirect('project')->with('success', 'Berhasil menghapus data.');;
+    }
+
+
+
+    ##### TASK
+    public function addTask(Project $project, Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'description' => 'string',
+            'status' => Rule::in(array_keys(ProjectTask::getStatusList()))
+        ], [
+            'max' => 'max panjang 255 karakter.',
+            'required' => 'Field :attribute tidak boleh kosong.',
+            'in' => 'Tidak valid',
+            'string' => 'Tidak valid',
+        ]);
+
+
+        if ($validator->fails()) {
+            return redirect('project/' . $project->id)
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
+
+        $projectTask = new ProjectTask();
+        $projectTask->project_id = $project->id;
+        $projectTask->title = $validated['title'];
+        $projectTask->description = $validated['description'];
+        $projectTask->status = $validated['status'];
+        $projectTask->save();
+
+
+        return redirect('project/' . $project->id)->with('success', 'Berhasil menambahkan task.');
+    }
+
+    public function editTask(Project $project, ProjectTask $projectTask)
+    {
+        return view('project.edit_task', [
+            'project' => $project,
+            'projectTask' => $projectTask
+        ]);
+    }
+
+    public function updateTask(Project $project, ProjectTask $projectTask, Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:255',
+            'description' => 'string',
+            'status' => Rule::in(array_keys(ProjectTask::getStatusList()))
+        ], [
+            'max' => 'max panjang 255 karakter.',
+            'required' => 'Field :attribute tidak boleh kosong.',
+            'in' => 'Tidak valid',
+            'string' => 'Tidak valid',
+        ]);
+
+
+        if ($validator->fails()) {
+            return redirect('project/' . $project->id . '/edit-task/' . $projectTask->id)
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $validated = $validator->validated();
+        $projectTask->title = $validated['title'];
+        $projectTask->description = $validated['description'];
+        $projectTask->status = $validated['status'];
+        $projectTask->save();
+
+        return redirect('project/' . $project->id)->with('success', 'Berhasil menyimpan task.');
+    }
+
+    public function deleteTask(Project $project, ProjectTask $projectTask)
+    {
+        $projectTask->delete();
+        return redirect('project/' . $project->id)->with('success', 'Berhasil menghapus data.');;
     }
 }

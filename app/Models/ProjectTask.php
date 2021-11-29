@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/***
- * @property int $id
- * @property string $name
- * @property string $description
- * @property string $startDate
- * @property string|null $endDate
+/**
+ *
+ * @property string $title
+ * @property stirng|null $description
+ * @property int $project_id
+ * @property int $status
  */
-class Project extends Model
+class ProjectTask extends Model
 {
     use HasFactory;
 
@@ -34,11 +34,8 @@ class Project extends Model
         return @self::getStatusList()[$this->status];
     }
 
-    /**
-     * Get the comments for the blog post.
-     */
-    public function projectTasks()
+    public function project()
     {
-        return $this->hasMany(ProjectTask::class);
+        return $this->hasOne(Project::class);
     }
 }

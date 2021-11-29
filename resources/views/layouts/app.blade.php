@@ -31,7 +31,7 @@
 
         <!-- Page Content -->
         <main>
-            <div class="py-4 md:container mx-auto">
+            <div class="py-4 px-3 md:container mx-auto">
                 @if (session('success'))
                     <div class="p-3 bg-green-100 mb-4">
                         {{ session('success') }}

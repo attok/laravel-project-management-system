@@ -18,8 +18,11 @@
     @foreach ($projects as $project)
         <div class="card mb-4">
             <h3 class="card-title">{{ $project->name }}</h3>
+            <div class="mb-2">
+                <x-status-project status="{{ $project->status }}"></x-status-project>
+            </div>
             <p>{{ $project->description }}</p>
-            <div class="mb-4">
+            <div class=" mb-4">
                 Start Date : {{ $project->startDate }}<br />
                 Due Date : {{ $project->endDate }}
             </div>
@@ -58,4 +61,7 @@
 
         </div>
     @endforeach
+
+
+    {{ $projects->links() }}
 </x-app-layout>

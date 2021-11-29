@@ -32169,7 +32169,7 @@ select {
   transition-duration: 150ms;
 }
 
-.btn * ~ svg {
+.btn > * ~ svg {
   margin-right: 0.5rem;
 }
 
